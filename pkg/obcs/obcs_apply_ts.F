@@ -164,8 +164,8 @@ C     add tendency term instead of overwriting field with boundary value
            Iobc = OB_Ie(j,bi,bj)
            IF ( Iobc.NE.OB_indexNone ) THEN
             DO k = kLo,kHi
-             tFld(Iobc,j,k,bi,bj) = OBEt(j,k,bi,bj)
-             sFld(Iobc,j,k,bi,bj) = OBEs(j,k,bi,bj)
+             tFld(Iobc,j,k,bi,bj) = tFld(Iobc-1,j,k,bi,bj)
+             sFld(Iobc,j,k,bi,bj) = sFld(Iobc-1,j,k,bi,bj)
             ENDDO
            ENDIF
           ENDDO
@@ -198,8 +198,8 @@ C     add tendency term instead of overwriting field with boundary value
            Iobc = OB_Iw(j,bi,bj)
            IF ( Iobc.NE.OB_indexNone ) THEN
             DO k = kLo,kHi
-             tFld(Iobc,j,k,bi,bj) = OBWt(j,k,bi,bj)
-             sFld(Iobc,j,k,bi,bj) = OBWs(j,k,bi,bj)
+             tFld(Iobc,j,k,bi,bj) = tFld(Iobc+1,j,k,bi,bj)
+             sFld(Iobc,j,k,bi,bj) = sFld(Iobc+1,j,k,bi,bj)
             ENDDO
            ENDIF
           ENDDO
