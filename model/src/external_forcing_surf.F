@@ -57,6 +57,12 @@ C     ks     :: index of surface interface layer
       INTEGER bi,bj
       INTEGER i,j
       INTEGER ks
+<<<<<<< HEAD
+=======
+#ifdef ALLOW_AUTODIFF_TAMC
+      INTEGER ikey
+#endif
+>>>>>>> master
       _RL recip_Cp
 
 C---------------------------------
@@ -131,7 +137,9 @@ C     to oceanic surface forcing
 
 #ifdef ALLOW_BALANCE_FLUXES
 C     balance fluxes
+# ifdef ALLOW_AUTODIFF
       tmpVar(1) = oneRS
+<<<<<<< HEAD
       IF ( balanceEmPmR .AND. (.NOT.useSeaice .OR. useThSIce) ) THEN
         CALL REMOVE_MEAN_RS( 1, EmPmR, maskInC, maskInC, rA, tmpVar,
      &                       'EmPmR', myTime, myThid )
@@ -139,6 +147,25 @@ C     balance fluxes
       IF ( balanceQnet  .AND. (.NOT.useSeaice .OR. useThSIce) ) THEN
         CALL REMOVE_MEAN_RS( 1, Qnet,  maskInC, maskInC, rA, tmpVar,
      &                       'Qnet ', myTime, myThid )
+=======
+# endif
+      IF ( selectBalanceEmPmR.GE.1 .AND.
+     &     (.NOT.useSeaice .OR. useThSIce) ) THEN
+       IF ( selectBalanceEmPmR.EQ.1 ) THEN
+        tmpVar(1) = oneRS
+        CALL REMOVE_MEAN_RS( 1, EmPmR, maskInC, maskInC, rA,
+     &                       tmpVar, 'EmPmR', myTime, myIter, myThid )
+       ELSEIF ( selectBalanceEmPmR.EQ.2 ) THEN
+        tmpVar(1) = -oneRS
+        CALL REMOVE_MEAN_RS( 1, EmPmR, weight2BalanceFlx, maskInC, rA,
+     &                       tmpVar, 'EmPmR', myTime, myIter, myThid )
+       ENDIF
+      ENDIF
+      IF ( balanceQnet  .AND. (.NOT.useSeaice .OR. useThSIce) ) THEN
+        tmpVar(1) = oneRS
+        CALL REMOVE_MEAN_RS( 1, Qnet,  maskInC, maskInC, rA,
+     &                       tmpVar, 'Qnet ', myTime, myIter, myThid )
+>>>>>>> master
       ENDIF
 #endif /* ALLOW_BALANCE_FLUXES */
 
@@ -231,6 +258,7 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
        DO bi=myBxLo(myThid),myBxHi(myThid)
 
 #ifdef ALLOW_AUTODIFF_TAMC
+<<<<<<< HEAD
           act1 = bi - myBxLo(myThid)
           max1 = myBxHi(myThid) - myBxLo(myThid) + 1
           act2 = bj - myByLo(myThid)
@@ -241,6 +269,9 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
           ikey = (act1 + 1) + act2*max1
      &                      + act3*max1*max2
      &                      + act4*max1*max2*max3
+=======
+        ikey = bi + (bj-1)*nSx + (ikey_dynamics-1)*nSx*nSy
+>>>>>>> master
 #endif /* ALLOW_AUTODIFF_TAMC */
 
 #ifdef ALLOW_AUTODIFF_TAMC
