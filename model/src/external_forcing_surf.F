@@ -32,9 +32,8 @@ C     === Global variables ===
 #include "DYNVARS.h"
 #include "GRID.h"
 #include "SURFACE.h"
-#ifdef ALLOW_AUTODIFF
+#ifdef ALLOW_AUTODIFF_TAMC
 # include "tamc.h"
-# include "tamc_keys.h"
 #endif
 
 C     !INPUT/OUTPUT PARAMETERS:
@@ -57,34 +56,27 @@ C     ks     :: index of surface interface layer
       INTEGER bi,bj
       INTEGER i,j
       INTEGER ks
-<<<<<<< HEAD
-=======
-#ifdef ALLOW_AUTODIFF_TAMC
-      INTEGER ikey
-#endif
->>>>>>> master
-      _RL recip_Cp
 
 C---------------------------------
 C--   BEGIN STEWART CODE
 C---------------------------------
 
 C--   Constants
-      Real*8 L0_als      !-- Latent heat of melting at 0 deg C (J/kg)
-      Real*8 ci_als      !-- Specific heat capacity of ice (J/kg/C)
-      Real*8 cw_als      !-- Specific heat capacity of water (J/kg/C)
-      Real*8 rhow_als    !-- Reference density of water (kg/m^3)
-      Real*8 rhoi_als    !-- Reference density of ice (kg/m^3)
-      Real*8 kapi_als    !-- Molecular thermal diffusivity of ice (m^2/s)
-      Real*8 gamT_als    !-- Thermal turbulent exchange velocity (m/s)
-      Real*8 delh_als    !-- Ice thickness (m)
-      Real*8 frS_als     !-- Ice salinity retention (dimensionless)
-      Real*8 mu_als      !-- Linear freezing temperature coefficient (deg C/psu)
-      Real*8 Ti_als      !-- Ice temperature (deg C)
-      Real*8 Si_als      !-- Ice salinity (psu)
-      Real*8 lam_als     !-- Vertical temperature diffusivity in ice (J/deg C/m/
-      Real*8 Lshelf_als  !-- Width of ice shelf (m)
-      Real*8 Xshelf_als  !-- Zonal position of ice shelf (m)
+      Real*8 L0_als
+      Real*8 ci_als
+      Real*8 cw_als
+      Real*8 rhow_als
+      Real*8 rhoi_als
+      Real*8 kapi_als
+      Real*8 gamT_als
+      Real*8 delh_als
+      Real*8 frS_als
+      Real*8 mu_als
+      Real*8 Ti_als
+      Real*8 Si_als
+      Real*8 lam_als
+      Real*8 Lshelf_als
+      Real*8 Xshelf_als
 
 
 C--   Reciprocals
@@ -93,28 +85,33 @@ C--   Reciprocals
       Real*8 recip_rhow_als
 
 C--   Variables
-      LOGICAL isMelting_als    !-- Determines whether ice is melting or freezing
-      Real*8 To_als               !-- Ocean temperature (deg C)
-      Real*8 So_als               !-- Ocean salinity (psu)
-      Real*8 Sb_als               !-- Boundary layer salinity (psu)
-      Real*8 Tb_als               !-- Boundary layer temperature (deg C)
-      Real*8 Tib_als              !-- Temperature of source (ice or ocean)
-      Real*8 Sib_als              !-- Salinity of source (ice or ocean)
-      Real*8 Eo_als               !-- Ocean internal energy
-      Real*8 Eb_als               !-- Boundary layer internal energy
-      Real*8 Eib_als              !-- Internal energy of source (ice or ocean)
-      Real*8 Fdiff_als            !-- Vertical diffusive heat transport through sea ice
-      Real*8 Fturb_als            !-- Turbulent heat transport into ocean-ice boundary layer
-      Real*8 Fm_als               !-- Downward mass flux due to melting/freezing
-      Real*8 FH_als               !-- Downward heat flux due to melting/freezing
-      Real*8 FS_als               !-- Downward salt flux due to melting/freezing
-      Real*8 FHeff_als            !-- Effective downward heat flux
-      Real*8 FSeff_als            !-- Effective downward salt flux
+      LOGICAL isMelting_als
+      Real*8 To_als
+      Real*8 So_als
+      Real*8 Sb_als
+      Real*8 Tb_als
+      Real*8 Tib_als
+      Real*8 Sib_als
+      Real*8 Eo_als
+      Real*8 Eb_als
+      Real*8 Eib_als
+      Real*8 Fdiff_als
+      Real*8 Fturb_als
+      Real*8 Fm_als
+      Real*8 FH_als
+      Real*8 FS_als
+      Real*8 FHeff_als
+      Real*8 FSeff_als
 
 C---------------------------------
 C--   END STEWART CODE
 C---------------------------------
 
+
+#ifdef ALLOW_AUTODIFF_TAMC
+      INTEGER ikey
+#endif
+      _RL recip_Cp
 #ifdef ALLOW_BALANCE_FLUXES
       _RS tmpVar(1)
 #endif
@@ -139,15 +136,6 @@ C     to oceanic surface forcing
 C     balance fluxes
 # ifdef ALLOW_AUTODIFF
       tmpVar(1) = oneRS
-<<<<<<< HEAD
-      IF ( balanceEmPmR .AND. (.NOT.useSeaice .OR. useThSIce) ) THEN
-        CALL REMOVE_MEAN_RS( 1, EmPmR, maskInC, maskInC, rA, tmpVar,
-     &                       'EmPmR', myTime, myThid )
-      ENDIF
-      IF ( balanceQnet  .AND. (.NOT.useSeaice .OR. useThSIce) ) THEN
-        CALL REMOVE_MEAN_RS( 1, Qnet,  maskInC, maskInC, rA, tmpVar,
-     &                       'Qnet ', myTime, myThid )
-=======
 # endif
       IF ( selectBalanceEmPmR.GE.1 .AND.
      &     (.NOT.useSeaice .OR. useThSIce) ) THEN
@@ -165,7 +153,6 @@ C     balance fluxes
         tmpVar(1) = oneRS
         CALL REMOVE_MEAN_RS( 1, Qnet,  maskInC, maskInC, rA,
      &                       tmpVar, 'Qnet ', myTime, myIter, myThid )
->>>>>>> master
       ENDIF
 #endif /* ALLOW_BALANCE_FLUXES */
 
@@ -258,20 +245,7 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
        DO bi=myBxLo(myThid),myBxHi(myThid)
 
 #ifdef ALLOW_AUTODIFF_TAMC
-<<<<<<< HEAD
-          act1 = bi - myBxLo(myThid)
-          max1 = myBxHi(myThid) - myBxLo(myThid) + 1
-          act2 = bj - myByLo(myThid)
-          max2 = myByHi(myThid) - myByLo(myThid) + 1
-          act3 = myThid - 1
-          max3 = nTx*nTy
-          act4 = ikey_dynamics - 1
-          ikey = (act1 + 1) + act2*max1
-     &                      + act3*max1*max2
-     &                      + act4*max1*max2*max3
-=======
         ikey = bi + (bj-1)*nSx + (ikey_dynamics-1)*nSx*nSy
->>>>>>> master
 #endif /* ALLOW_AUTODIFF_TAMC */
 
 #ifdef ALLOW_AUTODIFF_TAMC
@@ -303,94 +277,6 @@ C     Net Salt Flux :
          ENDDO
         ENDDO
 
-C---------------------------------
-C--   BEGIN STEWART CODE
-C---------------------------------
-
-C--   Calculate heat/ salt fluxes using the 2-equation model of
-C--   Schmidt et al. (2004) or Holland & Jenkins (1999)
-
-C--   Set constants
-      L0_als = 3.34D5                  !-- Latent heat of melting at 0 deg C (J/kg)
-      ci_als = 2.06D3                  !-- Specific heat capacity of ice (J/kg/C)
-      cw_als = HeatCapacity_Cp            !-- Specific heat capacity of water (J/kg/C)
-      rhow_als = rhoConst                 !-- Reference density of water (kg/m^3)
-      rhoi_als = 9.2D2                 !-- Reference density of ice( kg/m^3)
-      kapi_als = 1.14D-6               !-- Molecular thermal diffusivity of ice (m^2/s)
-      gamT_als = 6.D-5                 !-- Thermal turbulent exchange velocity (m/s)
-      delh_als = 1.D0                  !-- Ice thickness (m)
-      frS_als = 1.4D-1                 !-- Ice salinity retention (dimensionless)
-      mu_als = 5.4D-2                  !-- Linear freezing temperature coefficient (deg C/psu)
-      Ti_als = - 5.D0                  !-- Ice temperature (deg C)
-      Si_als = 5.D0                    !-- Ice salinity (psu)
-      lam_als = rhoi_als*ci_als*kapi_als  !-- Vertical temperature diffusivity in ice (J/deg C/m/s)
-      Lshelf_als = 5.D4                !-- Width of ice shelf (m)
-
-C--   Reciprocals
-      recip_cw_als = recip_Cp
-      recip_delh_als = 1.D0 / delh_als
-      recip_rhow_als = recip_rhoConst
-
-      DO i = iMin, iMax
-
-        DO j = jMin, jMax
-
-          IF (xC(i,j,bi,bj) > Lshelf_als) THEN
-
-C--         Ocean and boundary layer temperature/salinity
-            To_als = theta(i,j,ks,bi,bj)     !-- Ocean temperature (degC)
-            So_als = salt(i,j,ks,bi,bj)      !-- Ocean salinity (psu)
-            Sb_als = So_als                  !-- Boundary layer salinity(psu)
-            Tb_als = -mu_als*Sb_als          !-- Boundary layer temperature (deg C)
-
-C--         Compute heat fluxes due to diffusion within ice and
-C--         turbulent exchance with the ocean-ice boundary layer,
-C--         in order to determine whether melting or freezing is
-C--         taking place
-            Fdiff_als = - lam_als*(Ti_als-Tb_als)*recip_delh_als
-            Fturb_als = rhow_als*cw_als*gamT_als*(Tb_als-To_als)
-            isMelting_als = Fdiff_als+Fturb_als <= 0
-
-C--         Determine source temperature and salinity depending on
-C--         whether melting or freezing is taking place
-            IF (isMelting_als) THEN
-              Tib_als = Ti_als
-              Sib_als = Si_als
-            ELSE
-              Tib_als = Tb_als
-              Sib_als = frS_als*Sb_als
-            ENDIF
-
-C--         Internal energies
-            Eo_als = cw_als*To_als
-            Eb_als = cw_als*Tb_als
-            Eib_als = - L0_als + ci_als*Tib_als
-
-C--         Downward mass, heat and salt fluxes
-            Fm_als = - (Fdiff_als+Fturb_als) / (Eb_als-Eib_als)
-            FH_als = - Fdiff_als + Fm_als*Eib_als
-            FS_als = Fm_als*Sib_als
-
-C--         "Virtual" heat and salt fluxes into the ocean
-            FHeff_als = FH_als  - Fm_als*Eo_als
-            FSeff_als = FS_als - Fm_als*So_als
-
-C--         Add fluxes to surface forcing
-            surfaceForcingT(i,j,bi,bj) = surfaceForcingT(i,j,bi,bj)
-     &         + FHeff_als*recip_cw_als*recip_rhow_als
-            surfaceForcingS(i,j,bi,bj) = surfaceForcingS(i,j,bi,bj)
-     &         + FSeff_als*recip_rhow_als
-
-          ENDIF
-
-        ENDDO
-
-      ENDDO
-
-C---------------------------------
-C--   END STEWART CODE
-C---------------------------------
-
 #ifdef ALLOW_SALT_PLUME
 C saltPlume is the amount of salt rejected by ice while freezing;
 C it is here subtracted from surfaceForcingS and will be redistributed
@@ -406,6 +292,84 @@ C-- external_forcing_surf.F outside bi,bj loop.
         ENDIF
 #endif /* SALT_PLUME_VOLUME */
 #endif /* ALLOW_SALT_PLUME */
+
+C---------------------------------
+C--   BEGIN STEWART CODE
+C---------------------------------
+
+
+C--   Set constants
+      L0_als = 3.34D5
+      ci_als = 2.06D3
+      cw_als = HeatCapacity_Cp
+      rhow_als = rhoConst
+      rhoi_als = 9.2D2
+      kapi_als = 1.14D-6
+      gamT_als = 6.D-5
+      delh_als = 1.D0
+      frS_als = 1.4D-1
+      mu_als = 5.4D-2
+      Ti_als = - 5.D0
+      Si_als = 5.D0
+      lam_als = rhoi_als*ci_als*kapi_als
+      Lshelf_als = 5.D4
+
+C--   Reciprocals
+      recip_cw_als = recip_Cp
+      recip_delh_als = 1.D0 / delh_als
+      recip_rhow_als = recip_rhoConst
+
+      DO i = iMin, iMax
+
+        DO j = jMin, jMax
+
+          IF (xC(i,j,bi,bj) > Lshelf_als) THEN
+
+
+            To_als = theta(i,j,ks,bi,bj)
+            So_als = salt(i,j,ks,bi,bj)
+            Sb_als = So_als
+            Tb_als = -mu_als*Sb_als
+
+            Fdiff_als = - lam_als*(Ti_als-Tb_als)*recip_delh_als
+            Fturb_als = rhow_als*cw_als*gamT_als*(Tb_als-To_als)
+            isMelting_als = Fdiff_als+Fturb_als <= 0
+
+            IF (isMelting_als) THEN
+              Tib_als = Ti_als
+              Sib_als = Si_als
+            ELSE
+              Tib_als = Tb_als
+              Sib_als = frS_als*Sb_als
+            ENDIF
+
+
+            Eo_als = cw_als*To_als
+            Eb_als = cw_als*Tb_als
+            Eib_als = - L0_als + ci_als*Tib_als
+
+            Fm_als = - (Fdiff_als+Fturb_als) / (Eb_als-Eib_als)
+            FH_als = - Fdiff_als + Fm_als*Eib_als
+            FS_als = Fm_als*Sib_als
+
+            FHeff_als = FH_als  - Fm_als*Eo_als
+            FSeff_als = FS_als - Fm_als*So_als
+
+
+            surfaceForcingT(i,j,bi,bj) = surfaceForcingT(i,j,bi,bj)
+     &         + FHeff_als*recip_cw_als*recip_rhow_als
+            surfaceForcingS(i,j,bi,bj) = surfaceForcingS(i,j,bi,bj)
+     &         + FSeff_als*recip_rhow_als
+
+          ENDIF
+
+        ENDDO
+
+      ENDDO
+
+C---------------------------------
+C--   END STEWART CODE
+C---------------------------------
 
 C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 C--   Fresh-water flux
@@ -527,7 +491,7 @@ C   (requires time varying dP(Nr) like dP(k-bottom) with NonLin FS).
           DO j = jMin, jMax
            DO i = iMin, iMax
             phi0surf(i,j,bi,bj) = ( pLoad(i,j,bi,bj)
-     &                          +sIceLoad(i,j,bi,bj)*gravity
+     &                          +sIceLoad(i,j,bi,bj)*gravity*sIceLoadFac
      &                            )*recip_rhoConst
            ENDDO
           ENDDO
