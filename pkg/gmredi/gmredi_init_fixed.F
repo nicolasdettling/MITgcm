@@ -51,6 +51,17 @@ C--   Initialize arrays in common blocks :
        ENDDO
       ENDDO
 
+
+      DO bj = myByLo(myThid), myByHi(myThid)
+       DO bi = myBxLo(myThid), myBxHi(myThid)
+        DO j=1-OLy,sNy+OLy
+         DO i=1-OLx,sNx+OLx
+           GM_topo_slope(i,j,bi,bj) = 0. _d 0
+         ENDDO
+        ENDDO
+       ENDDO
+      ENDDO
+
 C--   Read horizontal 2.D scaling factors from files:
       IF ( GM_iso2dFile .NE. ' ' ) THEN
        CALL READ_FLD_XY_RS( GM_iso2dFile, ' ', GM_isoFac2d, 0, myThid )
@@ -59,6 +70,11 @@ C--   Read horizontal 2.D scaling factors from files:
       IF ( GM_bol2dFile .NE. ' ' ) THEN
        CALL READ_FLD_XY_RS( GM_bol2dFile, ' ', GM_bolFac2d, 0, myThid )
        CALL EXCH_XY_RS( GM_bolFac2d, myThid )
+      ENDIF
+
+      IF ( GM_topo_slope_file .NE. ' ' ) THEN
+       CALL READ_FLD_XY_RS( GM_topo_slope_file, ' ', GM_topo_slope, 0, myThid )
+       CALL EXCH_XY_RS( GM_topo_slope, myThid )
       ENDIF
 
 C--   Set vertical 1.D scaling factors

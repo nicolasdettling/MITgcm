@@ -70,6 +70,7 @@ C     GM_bol2dFile :: input file for 2.D horiz scaling of Thickness diffusivity
 C     GM_bol1dFile :: input file for 1.D vert. scaling of Thickness diffusivity
 C     GM_K3dRediFile :: input file for background 3.D Isopycal(Redi) diffusivity
 C     GM_K3dGMFile   :: input file for background 3.D Thickness (GM) diffusivity
+C     GM_topo_slope_file  :: input file for topographic slope
 
       CHARACTER*(40) GM_taper_scheme
       CHARACTER*(MAX_LEN_FNAM) GM_iso2dFile
@@ -78,11 +79,14 @@ C     GM_K3dGMFile   :: input file for background 3.D Thickness (GM) diffusivity
       CHARACTER*(MAX_LEN_FNAM) GM_bol1dFile
       CHARACTER*(MAX_LEN_FNAM) GM_K3dRediFile
       CHARACTER*(MAX_LEN_FNAM) GM_K3dGMFile
+      CHARACTER*(MAX_LEN_FNAM) GM_topo_slope_file
+
       COMMON /GM_PARAMS_C/
      &                   GM_taper_scheme,
      &                   GM_iso2dFile, GM_iso1dFile,
      &                   GM_bol2dFile, GM_bol1dFile,
-     &                   GM_K3dRediFile, GM_K3dGMFile
+     &                   GM_K3dRediFile, GM_K3dGMFile,
+     & 			 GM_topo_slope_file
 
 C--   COMMON /GM_PARAMS_R/ GM/Redi real-type parameters
 C     GM_isopycK       :: Isopycnal diffusivity [m^2/s] (Redi-tensor)
@@ -205,12 +209,14 @@ C     GM_isoFac2d  :: 2.D horiz scaling factor [-] of Isopycnal diffusivity
 C     GM_bolFac2d  :: 2.D horiz scaling factor [-] of Thickness diffusivity
 C     GM_isoFac1d  :: 1.D vert. scaling factor [-] of Isopycnal diffusivity
 C     GM_bolFac1d  :: 1.D vert. scaling factor [-] of Thickness diffusivity
+      _RS GM_topo_slope(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
       _RS GM_isoFac2d(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
       _RS GM_bolFac2d(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
       _RS GM_isoFac1d(Nr)
       _RS GM_bolFac1d(Nr)
       COMMON /GM_COEFFICIENTS/
-     &  GM_isoFac2d, GM_bolFac2d, GM_isoFac1d, GM_bolFac1d
+     &  GM_isoFac2d, GM_bolFac2d, GM_isoFac1d, GM_bolFac1d,
+     &  GM_topo_slope
 
 #ifdef GM_READ_K3D_REDI
 C--   COMMON /GM_INP_K3D_REDI/ 3.D background isopycnal (Redi) diffusiv. [m^2/s]
