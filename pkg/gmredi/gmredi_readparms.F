@@ -65,7 +65,7 @@ C     GM_slopeSqCutoff :: slope^2 cut-off value
      &          GM_useSubMeso, subMeso_Ceff, subMeso_invTau,
      &          subMeso_LfMin, subMeso_Lmax,
      &          GM_Visbeck_alpha, GM_Visbeck_length,
-     &          GM_Visbeck_depth,
+     &          GM_Visbeck_depth, GM_Visbeck_e_slope,
      &          GM_Visbeck_minDepth, GM_Visbeck_maxSlope,
      &          GM_Visbeck_minVal_K, GM_Visbeck_maxVal_K,
      &          GM_useBatesK3d, GM_Bates_smooth, GM_Bates_use_constK,
@@ -81,7 +81,6 @@ C     GM_slopeSqCutoff :: slope^2 cut-off value
      &          GM_Bates_minRenorm, GM_Bates_maxRenorm,
      &          GM_useLeithQG,
      &          GM_MNC
-
 C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 
       IF ( .NOT.useGMRedi ) THEN
@@ -145,6 +144,7 @@ C--   Default values Visbeck
       GM_Visbeck_maxSlope = UNSET_RL
       GM_Visbeck_minVal_K =    0. _d 0
       GM_Visbeck_maxVal_K = 2500. _d 0
+      GM_Visbeck_e_slope =     0. _d 0
 
 C--   Default values for BatesK3d
       GM_useBatesK3d     = .FALSE.
