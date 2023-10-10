@@ -105,6 +105,7 @@ c     _RL M2loc
       _RL recipMaxSlope
       _RL deltaH, integrDepth
       _RL N2loc, SNloc
+      _RL Visbeck_Redi
 #endif /* GM_VISBECK_VARIABLE_K */
 
 #ifdef ALLOW_DIAGNOSTICS
@@ -136,6 +137,8 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
      &                  DIAGNOSTICS_IS_ON('GM_KvzTz', myThid )
       ENDIF
 #endif
+
+      Visbeck_Redi = 0.0 _d 0
 
 #ifdef GM_VISBECK_VARIABLE_K
       recipMaxSlope = 0. _d 0
@@ -569,6 +572,7 @@ CADJ STORE Kwz(:,:,k,bi,bj) = comlev1_bibj_k, key=kkey, byte=isbyte
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
      &           + VisbeckK(i,j,bi,bj)*(1. _d 0 + GM_skewflx)
+     &             *Visbeck_Redi    
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &           + op5*( GM_LeithQG_K(i,j,km1,bi,bj)
@@ -589,7 +593,7 @@ CADJ STORE Kwz(:,:,k,bi,bj) = comlev1_bibj_k, key=kkey, byte=isbyte
          Kwz(i,j,k,bi,bj)= ( isopycK*GM_isoFac2d(i,j,bi,bj)
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &                     + VisbeckK(i,j,bi,bj)
+     &                     + Visbeck_Redi*VisbeckK(i,j,bi,bj)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &                     + op5*( GM_LeithQG_K(i,j,km1,bi,bj)
@@ -754,7 +758,8 @@ c      IF ( GM_nonUnitDiag ) THEN
      &        *op5*(GM_isoFac2d(i-1,j,bi,bj)+GM_isoFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &     + op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))
+     &     + (op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))
+     &         *Visbeck_Redi)    
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &     + op5*(GM_LeithQG_K(i-1,j,k,bi,bj)+GM_LeithQG_K(i,j,k,bi,bj))
@@ -802,7 +807,8 @@ CADJ STORE SlopeX(:,:)       = comlev1_bibj_k, key=kkey, byte=isbyte
      &        *op5*(GM_bolFac2d(i-1,j,bi,bj)+GM_bolFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &     + op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))*GM_advect
+     &     + (op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))*GM_advect
+     &         *Visbeck_Redi)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &     + op5*( GM_LeithQG_K(i-1,j,k,bi,bj)
@@ -839,7 +845,8 @@ C         store in tmp1k Kuz_Redi
      &        *op5*(GM_isoFac2d(i-1,j,bi,bj)+GM_isoFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &      + op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))
+     &      + (op5*(VisbeckK(i-1,j,bi,bj)+VisbeckK(i,j,bi,bj))
+     &          *Visbeck_Redi)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &      + op5*( GM_LeithQG_K(i-1,j,k,bi,bj)
@@ -981,7 +988,8 @@ c      IF ( GM_nonUnitDiag ) THEN
      &        *op5*(GM_isoFac2d(i,j-1,bi,bj)+GM_isoFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &     + op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))
+     &     + (op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))
+     &        *Visbeck_Redi)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &     + op5*(GM_LeithQG_K(i,j-1,k,bi,bj)+GM_LeithQG_K(i,j,k,bi,bj))
@@ -1029,7 +1037,8 @@ CADJ STORE SlopeY(:,:)       = comlev1_bibj_k, key=kkey, byte=isbyte
      &        *op5*(GM_bolFac2d(i,j-1,bi,bj)+GM_bolFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &     + op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))*GM_advect
+     &     + (op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))*GM_advect
+     &        *Visbeck_Redi)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &     + op5*( GM_LeithQG_K(i,j-1,k,bi,bj)
@@ -1066,7 +1075,8 @@ C         store in tmp1k Kvz_Redi
      &        *op5*(GM_isoFac2d(i,j-1,bi,bj)+GM_isoFac2d(i,j,bi,bj))
 #endif
 #ifdef GM_VISBECK_VARIABLE_K
-     &      + op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))
+     &      + (op5*(VisbeckK(i,j-1,bi,bj)+VisbeckK(i,j,bi,bj))
+     &         *Visbeck_Redi)
 #endif
 #ifdef ALLOW_GM_LEITH_QG
      &      + op5*( GM_LeithQG_K(i,j-1,k,bi,bj)
