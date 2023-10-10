@@ -55,6 +55,7 @@ C     GM_slopeSqCutoff :: slope^2 cut-off value
      &          GM_bol2dFile, GM_bol1dFile,
      &          GM_K3dRediFile, GM_K3dGMFile,
      &          GM_background_K3dFile, GM_isopycK3dFile,
+     &          GM_topo_slope_file,
      &          GM_taper_scheme,
      &          GM_maxSlope,
      &          GM_Kmin_horiz,
@@ -118,6 +119,7 @@ C--   Default values GM/Redi
       GM_bol1dFile        = ' '
       GM_K3dRediFile      = ' '
       GM_K3dGMFile        = ' '
+      GM_topo_slope_file  = ' ' 
       GM_useLeithQG       = .FALSE.
 
 C--   Default values GM/Redi I/O control
