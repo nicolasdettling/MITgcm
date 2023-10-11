@@ -162,7 +162,8 @@ C--   write GM scaling factors to file:
         CALL WRITE_FLD_XY_RS( 'GM_bolFac2d',' ',GM_bolFac2d,-1,myThid )
       ENDIF
       IF ( GM_topo_slope_file .NE. ' ' ) THEN
-        CALL WRITE_FLD_XY_RS( 'GM_topo_slope',' ',GM_topo_slope,-1,myThid )
+        CALL WRITE_FLD_XY_RS( 'GM_topo_slope',' ',
+     &    GM_topo_slope,-1,myThid )
       ENDIF
 #ifdef GM_BATES_K3D
       IF (.NOT.( startTime.EQ.baseTime .AND. nIter0.EQ.0

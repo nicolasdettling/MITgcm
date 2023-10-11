@@ -71,9 +71,9 @@ C--   Read horizontal 2.D scaling factors from files:
        CALL READ_FLD_XY_RS( GM_bol2dFile, ' ', GM_bolFac2d, 0, myThid )
        CALL EXCH_XY_RS( GM_bolFac2d, myThid )
       ENDIF
-
       IF ( GM_topo_slope_file .NE. ' ' ) THEN
-       CALL READ_FLD_XY_RS( GM_topo_slope_file, ' ', GM_topo_slope, 0, myThid )
+       CALL READ_FLD_XY_RS( GM_topo_slope_file,' ',
+     &  GM_topo_slope, 0, myThid )
        CALL EXCH_XY_RS( GM_topo_slope, myThid )
       ENDIF
 

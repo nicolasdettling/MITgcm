@@ -149,6 +149,7 @@ C     GM_Bates_maxRenorm :: maximum value for the renormalisation factor
       _RL GM_Visbeck_maxSlope
       _RL GM_Visbeck_minVal_K
       _RL GM_Visbeck_maxVal_K
+      _RL GM_Visbeck_e_slope
       _RL GM_Bates_gamma
       _RL GM_Bates_b1
       _RL GM_Bates_EadyMinDepth
@@ -176,7 +177,7 @@ C     GM_Bates_maxRenorm :: maximum value for the renormalisation factor
      &                 GM_BVP_cMin,
      &                 subMeso_Ceff, subMeso_invTau, subMeso_LfMin,
      &                 GM_Visbeck_alpha, GM_Visbeck_length,
-     &                 GM_Visbeck_depth,
+     &                 GM_Visbeck_depth, GM_Visbeck_e_slope,
      &                 GM_Visbeck_minDepth, GM_Visbeck_maxSlope,
      &                 GM_Visbeck_minVal_K, GM_Visbeck_maxVal_K,
      &                 GM_Bates_gamma, GM_Bates_b1,
