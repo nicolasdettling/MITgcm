@@ -411,6 +411,8 @@ c            M2loc = gravity*recip_rhoConst*dSigmaH
            VisbeckK(i,j,bi,bj) = VisbeckK(i,j,bi,bj)
      &       +deltaH*GM_Visbeck_alpha
      &              *GM_Visbeck_length*GM_Visbeck_length*SNloc
+     &              *(1 d0 / (1 d0 + GM_Visbeck_e_slope 
+     &              *GM_topo_slope(i,j,bi,bj)))      
           ENDIF
          ENDDO
         ENDDO
