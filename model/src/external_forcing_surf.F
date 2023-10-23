@@ -1,4 +1,4 @@
-#include "PACKAGES_CONFIG.h"
+      
 #include "CPP_OPTIONS.h"
 #ifdef ALLOW_AUTODIFF
 # include "AUTODIFF_OPTIONS.h"
@@ -56,6 +56,58 @@ C     ks     :: index of surface interface layer
       INTEGER bi,bj
       INTEGER i,j
       INTEGER ks
+
+C---------------------------------
+C--   BEGIN STEWART CODE
+C---------------------------------
+
+C--   Constants
+      Real*8 L0_als
+      Real*8 ci_als
+      Real*8 cw_als
+      Real*8 rhow_als
+      Real*8 rhoi_als
+      Real*8 kapi_als
+      Real*8 gamT_als
+      Real*8 delh_als
+      Real*8 frS_als
+      Real*8 mu_als
+      Real*8 Ti_als
+      Real*8 Si_als
+      Real*8 lam_als
+      Real*8 Lshelf_als
+      Real*8 Xshelf_als
+
+
+C--   Reciprocals
+      Real*8 recip_cw_als
+      Real*8 recip_delh_als
+      Real*8 recip_rhow_als
+
+C--   Variables
+      LOGICAL isMelting_als
+      Real*8 To_als
+      Real*8 So_als
+      Real*8 Sb_als
+      Real*8 Tb_als
+      Real*8 Tib_als
+      Real*8 Sib_als
+      Real*8 Eo_als
+      Real*8 Eb_als
+      Real*8 Eib_als
+      Real*8 Fdiff_als
+      Real*8 Fturb_als
+      Real*8 Fm_als
+      Real*8 FH_als
+      Real*8 FS_als
+      Real*8 FHeff_als
+      Real*8 FSeff_als
+
+C---------------------------------
+C--   END STEWART CODE
+C---------------------------------
+
+
 #ifdef ALLOW_AUTODIFF_TAMC
       INTEGER tkey
 #endif
@@ -84,9 +136,6 @@ C     to oceanic surface forcing
 C     balance fluxes
 # ifdef ALLOW_AUTODIFF
       tmpVar(1) = oneRS
-#  ifdef ALLOW_AUTODIFF_TAMC
-CADJ INCOMPLETE tmpVar
-#  endif
 # endif
       IF ( selectBalanceEmPmR.GE.1 .AND.
      &     (.NOT.useSeaice .OR. useThSIce) ) THEN
@@ -243,6 +292,84 @@ C-- external_forcing_surf.F outside bi,bj loop.
         ENDIF
 #endif /* SALT_PLUME_VOLUME */
 #endif /* ALLOW_SALT_PLUME */
+
+C---------------------------------
+C--   BEGIN STEWART CODE
+C---------------------------------
+
+
+C--   Set constants
+      L0_als = 3.34D5
+      ci_als = 2.06D3
+      cw_als = HeatCapacity_Cp
+      rhow_als = rhoConst
+      rhoi_als = 9.2D2
+      kapi_als = 1.14D-6
+      gamT_als = 6.D-5
+      delh_als = 1.D0
+      frS_als = 1.4D-1
+      mu_als = 5.4D-2
+      Ti_als = - 5.D0
+      Si_als = 5.D0
+      lam_als = rhoi_als*ci_als*kapi_als
+      Lshelf_als = 5.D4
+
+C--   Reciprocals
+      recip_cw_als = recip_Cp
+      recip_delh_als = 1.D0 / delh_als
+      recip_rhow_als = recip_rhoConst
+
+      DO i = iMin, iMax
+
+        DO j = jMin, jMax
+
+          IF (xC(i,j,bi,bj) > Lshelf_als) THEN
+
+
+            To_als = theta(i,j,ks,bi,bj)
+            So_als = salt(i,j,ks,bi,bj)
+            Sb_als = So_als
+            Tb_als = -mu_als*Sb_als
+
+            Fdiff_als = - lam_als*(Ti_als-Tb_als)*recip_delh_als
+            Fturb_als = rhow_als*cw_als*gamT_als*(Tb_als-To_als)
+            isMelting_als = Fdiff_als+Fturb_als <= 0
+
+            IF (isMelting_als) THEN
+              Tib_als = Ti_als
+              Sib_als = Si_als
+            ELSE
+              Tib_als = Tb_als
+              Sib_als = frS_als*Sb_als
+            ENDIF
+
+
+            Eo_als = cw_als*To_als
+            Eb_als = cw_als*Tb_als
+            Eib_als = - L0_als + ci_als*Tib_als
+
+            Fm_als = - (Fdiff_als+Fturb_als) / (Eb_als-Eib_als)
+            FH_als = - Fdiff_als + Fm_als*Eib_als
+            FS_als = Fm_als*Sib_als
+
+            FHeff_als = FH_als  - Fm_als*Eo_als
+            FSeff_als = FS_als - Fm_als*So_als
+
+
+            surfaceForcingT(i,j,bi,bj) = surfaceForcingT(i,j,bi,bj)
+     &         + FHeff_als*recip_cw_als*recip_rhow_als
+            surfaceForcingS(i,j,bi,bj) = surfaceForcingS(i,j,bi,bj)
+     &         + FSeff_als*recip_rhow_als
+
+          ENDIF
+
+        ENDDO
+
+      ENDDO
+
+C---------------------------------
+C--   END STEWART CODE
+C---------------------------------
 
 C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 C--   Fresh-water flux
