@@ -191,6 +191,7 @@ C-    Off-diagonal components of horizontal flux
         DO i=iMin,iMax
          vTrans(i,j) = dxG(i,j,bi,bj)*( GM_PsiY(i,j,kp1,bi,bj)*maskp1
      &                                 -GM_PsiY(i,j,k,bi,bj) )
+     &                               *maskInS(i,j,bi,bj)
      &                               *maskS(i,j,k,bi,bj)
         ENDDO
        ENDDO

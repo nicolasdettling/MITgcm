@@ -193,6 +193,7 @@ C-    Off-diagonal components of horizontal flux
          uTrans(i,j) = dyG(i,j,bi,bj)*( GM_PsiX(i,j,kp1,bi,bj)*maskp1
      &                                 -GM_PsiX(i,j,k,bi,bj) )
      &                               *maskW(i,j,k,bi,bj)
+     &                               *maskInW(i,j,bi,bj)       
         ENDDO
        ENDDO
 #ifdef GM_AUTODIFF_EXCESSIVE_STORE

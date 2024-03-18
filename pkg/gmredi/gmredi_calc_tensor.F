@@ -159,7 +159,7 @@ C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 C--   set ldd97_Lrho (for tapering scheme ldd97):
       IF ( GM_taper_scheme.EQ.'ldd97' .OR.
      &     GM_taper_scheme.EQ.'fm07' ) THEN
-       Cspd = 2. _d 0
+       Cspd = 2. _d -2
        LrhoInf = 15. _d 3
        LrhoSup = 100. _d 3
 C-     Tracer point location (center):
